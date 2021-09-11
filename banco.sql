@@ -11,6 +11,41 @@ DROP USER ''@'localhost';
 #-------------------------------------------------------------------------
 # Creación Tablas para las entidades
 
+CREATE TABLE transaccion_por_caja(
+ nro_trans INT UNSIGNED(10) NOT NULL, 
+ cod_caja INT UNSIGNED(5) NOT NULL,
+ 
+ CONSTRAINT pk_transaccion_por_caja
+ PRIMARY KEY (nro_trans),
+ 
+ CONSTRAINT FK_transaccion_por_caja_transaccion
+ FOREIGN KEY (nro_trans) REFERENCES transaccion (nro_trans) 
+   ON DELETE RESTRICT ON UPDATE CASCADE,
+   
+ CONSTRAINT FK_transaccion_por_caja_caja_ahorro
+ FOREIGN KEY (cod_caja) REFERENCES caja (cod_caja) 
+   ON DELETE RESTRICT ON UPDATE CASCADE,
+ 
+) ENGINE=InnoDB;
+
+CREATE TABLE deposito(
+ nro_trans INT UNSIGNED(10) NOT NULL, 
+ nro_ca INT UNSIGNED(8) NOT NULL,
+ 
+ CONSTRAINT pk_deposito
+ PRIMARY KEY (nro_trans),
+
+ CONSTRAINT FK_deposito_transaccion_por_caja 
+ FOREIGN KEY (nro_trans) REFERENCES transaccion_por_caja (nro_trans) 
+   ON DELETE RESTRICT ON UPDATE CASCADE,
+   
+ CONSTRAINT FK_deposito_caja_ahorro
+ FOREIGN KEY (nro_ca) REFERENCES caja_ahorro (nro_ca) 
+   ON DELETE RESTRICT ON UPDATE CASCADE,
+ 
+) ENGINE=InnoDB;
+
+
 CREATE TABLE extraccion(
  nro_trans INT UNSIGNED(10) NOT NULL, 
  nro_cliente INT UNSIGNED(5) NOT NULL, 
