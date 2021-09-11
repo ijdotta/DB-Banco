@@ -11,6 +11,52 @@ DROP USER ''@'localhost';
 #-------------------------------------------------------------------------
 # Creación Tablas para las entidades
 
+CREATE TABLE caja(
+ cod_caja INT UNSIGNED(5) NOT NULL,
+ 
+ CONSTRAINT pk_caja
+ PRIMARY KEY (cod_caja)
+ 
+) ENGINE=InnoDB;
+
+
+CREATE TABLE ventanilla(
+ cod_caja INT UNSIGNED(5) NOT NULL, 
+ nro_suc INT UNSIGNED(3) NOT NULL,
+ 
+ CONSTRAINT pk_ventanilla
+ PRIMARY KEY (cod_caja),
+ 
+ CONSTRAINT FK_ventanilla_caja
+ FOREIGN KEY (cod_caja) REFERENCES caja (cod_caja) 
+   ON DELETE RESTRICT ON UPDATE CASCADE,
+   
+ CONSTRAINT FK_ventanilla_sucursal
+ FOREIGN KEY (nro_suc) REFERENCES sucursal (nro_suc) 
+   ON DELETE RESTRICT ON UPDATE CASCADE
+ 
+) ENGINE=InnoDB;
+
+
+CREATE TABLE atm(
+ cod_caja INT UNSIGNED(5) NOT NULL, 
+ cod_postal INT UNSIGNED(4) NOT NULL,
+ direccion VARCHAR(69) NOT NULL,
+ 
+ CONSTRAINT pk_atm
+ PRIMARY KEY (cod_caja),
+ 
+ CONSTRAINT FK_atm_caja
+ FOREIGN KEY (cod_caja) REFERENCES caja (cod_caja) 
+   ON DELETE RESTRICT ON UPDATE CASCADE,
+   
+ CONSTRAINT FK_atm_ciudad
+ FOREIGN KEY (cod_postal) REFERENCES ciudad (cod_postal) 
+   ON DELETE RESTRICT ON UPDATE CASCADE
+ 
+) ENGINE=InnoDB;
+
+
 CREATE TABLE transaccion(
  nro_trans INT UNSIGNED(10) NOT NULL, 
  fecha DATE NOT NULL,
