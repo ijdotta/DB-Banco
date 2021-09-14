@@ -2,8 +2,6 @@
 CREATE DATABASE banco;
 USE banco
 
--- TABLAS:
-
 -- USUARIOS:
 
 -- Eliminar usuario vacío
@@ -11,14 +9,140 @@ DROP USER ''@'localhost';
 #-------------------------------------------------------------------------
 # Creación Tablas para las entidades
 
-CREATE TABLE caja(
+CREATE TABLE ciudad (
+  cod_postal INT(4) UNSIGNED NOT NULL,
+  nombre VARCHAR(20),
+
+  CONSTRAINT pk_ciudad
+  PRIMARY KEY (cod_postal)
+
+) ENGINE=InnoDB;
+
+CREATE TABLE sucursal (
+  nro_suc INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+  nombre VARCHAR(20) NOT NULL,
+  direccion VARCHAR(20) NOT NULL,
+  telefono VARCHAR(20) NOT NULL,
+  horario VARCHAR(20) NOT NULL,
+  cod_postal INT(4) UNSIGNED NOT NULL,
+
+  CONSTRAINT pk_sucursal
+  PRIMARY KEY (nro_suc),
+
+  CONSTRAINT FK_sucursal_ciudad
+  FOREIGN KEY (cod_postal) REFERENCES ciudad(cod_postal)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+
+) ENGINE=InnoDB;
+
+CREATE TABLE empleado (
+  legajo INT(4) UNSIGNED NOT NULL AUTO_INCREMENT,
+  apellido VARCHAR(20) NOT NULL,
+  nombre VARCHAR(20) NOT NULL,
+  tipo_doc VARCHAR(20) NOT NULL,
+  nro_doc INT(8) UNSIGNED NOT NULL,
+  direccion VARCHAR(20) NOT NULL,
+  telefono VARCHAR(20) NOT NULL,
+  cargo VARCHAR(20) NOT NULL,
+  password CHAR(32) NOT NULL,
+  nro_suc INT(3) UNSIGNED NOT NULL,
+
+  CONSTRAINT pk_empleado
+  PRIMARY KEY (legajo),
+
+  CONSTRAINT FK_empleado_sucursal
+  FOREIGN KEY (nro_suc) REFERENCES sucursal(nro_suc)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE cliente(
+  nro_cliente INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+  apellido VARCHAR(20) NOT NULL,
+  nombre VARCHAR(20) NOT NULL,
+  tipo_doc VARCHAR(20) NOT NULL,
+  nro_doc INT(8) UNSIGNED NOT NULL, -- es un natural?
+  direccion VARCHAR(20) NOT NULL,
+  telefono VARCHAR(20) NOT NULL,
+  fecha_nac DATE NOT NULL,
+
+  CONSTRAINT pk_cliente
+  PRIMARY KEY (nro_cliente)
+
+) ENGINE=InnoDB;
+
+CREATE TABLE plazo_fijo (
+  nro_plazo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  capital FLOAT(15, 2) NOT NULL DEFAULT 0,
+  tasa_interes FLOAT(5, 2) NOT NULL DEFAULT 0,
+  interes FLOAT(9, 2) NOT NULL DEFAULT 0,
+  nro_suc INT(3) UNSIGNED NOT NULL,
+
+  CONSTRAINT pk_plazo_fijo
+  PRIMARY KEY (nro_plazo),
+
+  CONSTRAINT FK_plazo_fijo_sucursal
+  FOREIGN KEY (nro_suc) REFERENCES sucursal(nro_suc)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+
+) ENGINE=InnoDB;
+
+CREATE TABLE tasa_plazo_fijo (
+  periodo INT(3) UNSIGNED NOT NULL,
+  monto_inf FLOAT(6, 2) NOT NULL DEFAULT 0,
+  monto_sup FLOAT(15, 2) NOT NULL DEFAULT 0,
+  tasa FLOAT(3, 2) NOT NULL DEFAULT 0,
+
+  CONSTRAINT pk_tasa_plazo_fijo
+  PRIMARY KEY (periodo, monto_inf, monto_sup)
+
+) ENGINE=InnoDB;
+
+CREATE TABLE plazo_cliente (
+  nro_plazo INT(8) UNSIGNED NOT NULL,
+  nro_cliente INT(5) UNSIGNED NOT NULL,
+
+  CONSTRAINT FK_plazo_cliente_plazo_fijo
+  FOREIGN KEY (nro_plazo) REFERENCES plazo_fijo(nro_plazo)
+     ON DELETE RESTRICT ON UPDATE RESTRICT,
+
+  CONSTRAINT FK_plazo_cliente_cliente
+  FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente)
+    ON DELETE RESTRICT ON UPDATE RESTRICT
+
+) ENGINE=InnoDB;
+
+CREATE TABLE prestamo (
+  nro_prestamo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+  fecha DATE NOT NULL,
+  cant_meses INT(2) UNSIGNED NOT NULL,
+  monto FLOAT(14, 2) NOT NULL DEFAULT 0, 
+  tasa_interes FLOAT(3, 2) NOT NULL DEFAULT 0, 
+  valor_cuota FLOAT(10, 2) NOT NULL DEFAULT 0, 
+  legajo INT(4) UNSIGNED NOT NULL,
+  nro_cliente INT(5) UNSIGNED NOT NULL,
+
+  CONSTRAINT pk_prestamo
+  PRIMARY KEY (nro_prestamo),
+
+  CONSTRAINT FK_prestamo_empleado
+  FOREIGN KEY (legajo) REFERENCES empleado(legajo)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+
+  CONSTRAINT FK_plazo_cliente_cliente
+  FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+  
+) ENGINE=InnoDB;
+
+CREATE TABLE caja (
  cod_caja INT UNSIGNED(5) NOT NULL,
  
  CONSTRAINT pk_caja
  PRIMARY KEY (cod_caja)
  
 ) ENGINE=InnoDB;
-
 
 CREATE TABLE ventanilla(
  cod_caja INT UNSIGNED(5) NOT NULL, 
