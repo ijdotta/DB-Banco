@@ -23,6 +23,11 @@ DROP USER ''@'localhost';
     BIGINT	8	-263	0	263-1	264-1
 */
 
+/*
+    * VERIFICAR POSIBLES RELACIONES FALTANTES (Como Tarjeta_CLç)
+    * VERIFICAR EN LAS RELACIONES QUE SOLO PUSIMOS FK SI NO HACE FALTA UNA PK
+*/
+
 CREATE TABLE ciudad (
   cod_postal SMALLINT(4) UNSIGNED NOT NULL,
   nombre VARCHAR(20),
@@ -182,6 +187,40 @@ CREATE TABLE caja_ahorro (
 
   CONSTRAINT pk_caja_ahorro
   PRIMARY KEY (nro_ca)
+
+) ENGINE=InnoDB;
+
+CREATE TABLE cliente_ca (
+  nro_cliente INT(5) UNSIGNED NOT NULL,
+  nro_ca INT(8) UNSIGNED NOT NULL,
+
+  KEY (nro_cliente, nro_ca),
+
+  CONSTRAINT FK_cliente_ca_cliente
+  FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+
+  CONSTRAINT FK_cliente_caja_ahorro
+  FOREIGN KEY (nro_ca) REFERENCES caja_ahorro(nro_ca)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+
+) ENGINE=InnoDB;
+
+CREATE TABLE tarjeta(
+  nro_tarjeta INT(16) UNSIGNED NOT NULL, -- BIGINT?
+  pin CHAR(32) NOT NULL,
+  cvt CHAR(32) NOT NULL,
+  fecha_venc DATE,
+  nro_cliente INT(5) UNSIGNED NOT NULL,
+  nro_ca INT(8) UNSIGNED NOT NULL,
+
+  CONSTRAINT FK_tarjeta_cliente_ca_cliente
+  FOREIGN KEY (nro_cliente) REFERENCES cliente_ca(nro_cliente)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+
+  CONSTRAINT FK_tarjeta_cliente_ca_ca
+  FOREIGN KEY (nro_ca) REFERENCES cliente_ca(nro_ca)
+    ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
