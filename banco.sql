@@ -9,6 +9,20 @@ DROP USER ''@'localhost';
 #-------------------------------------------------------------------------
 # Creación Tablas para las entidades
 
+/*
+    REEMPLAZAR LOS INT (y cualquier otro tipo de dato) POR EL DE MENOR REPRESENTACIÓN
+    POSIBLE.
+    Por ejemplo, si legajo tiene 4 cifras y TINY INT es suficiente, entonces no usar INT
+
+    Type	Storage (Bytes)	Minimum Value Signed	Minimum Value Unsigned	Maximum Value Signed	Maximum Value Unsigned
+    (Type, Bytes, Min_signed, Max_signed, min_unsigned, max_unsigned)
+    TINYINT	1	-128	0	127	255
+    SMALLINT	2	-32768	0	32767	65535
+    MEDIUMINT	3	-8388608	0	8388607	16777215
+    INT	4	-2147483648	0	2147483647	4294967295
+    BIGINT	8	-263	0	263-1	264-1
+*/
+
 CREATE TABLE ciudad (
   cod_postal INT(4) UNSIGNED NOT NULL,
   nombre VARCHAR(20),
@@ -134,6 +148,40 @@ CREATE TABLE prestamo (
   FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente)
     ON DELETE RESTRICT ON UPDATE CASCADE
   
+) ENGINE=InnoDB;
+
+CREATE TABLE pago (
+  nro_prestamo INT(8) UNSIGNED NOT NULL,
+  nro_pago INT(2) UNSIGNED NOT NULL,
+
+  CONSTRAINT pk_pago
+  PRIMARY KEY (nro_pago),
+
+  CONSTRAINT FK_pago_prestamo
+  FOREIGN KEY (nro_prestamo) REFERENCES prestamo(nro_prestamo)
+    ON DELETE RESTRICT ON UPDATE CASCADE
+
+) ENGINE=InnoDB;
+
+CREATE TABLE tasa_prestamo (
+  periodo INT(3) UNSIGNED NOT NULL,
+  monto_inf FLOAT(10, 2) NOT NULL DEFAULT 0, 
+  monto_sup FLOAT(15, 2) NOT NULL DEFAULT 0, 
+  tasa FLOAT(5, 2) NOT NULL DEFAULT 0, 
+
+  CONSTRAINT pk_tasa_prestamo
+  PRIMARY KEY (periodo, monto_inf, monto_sup)
+  
+) ENGINE=InnoDB;
+
+CREATE TABLE caja_ahorro (
+  nro_ca INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+  cbu INT(18) UNSIGNED NOT NULL,
+  saldo FLOAT(15, 2) UNSIGNED NOT NULL DEFAULT 0,
+
+  CONSTRAINT pk_caja_ahorro
+  PRIMARY KEY (nro_ca)
+
 ) ENGINE=InnoDB;
 
 CREATE TABLE caja (
