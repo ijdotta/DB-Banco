@@ -67,6 +67,7 @@ CREATE TABLE empleado (
   CONSTRAINT FK_empleado_sucursal
   FOREIGN KEY (nro_suc) REFERENCES sucursal(nro_suc)
     ON DELETE RESTRICT ON UPDATE CASCADE
+
 ) ENGINE=InnoDB;
 
 CREATE TABLE cliente(
@@ -144,7 +145,7 @@ CREATE TABLE prestamo (
   FOREIGN KEY (legajo) REFERENCES empleado(legajo)
     ON DELETE RESTRICT ON UPDATE CASCADE,
 
-  CONSTRAINT FK_plazo_cliente_cliente
+  CONSTRAINT FK_prestamo_cliente
   FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente)
     ON DELETE RESTRICT ON UPDATE CASCADE
   
@@ -236,7 +237,7 @@ CREATE TABLE transaccion(
  monto DECIMAL(9,2) NOT NULL,
  
  CONSTRAINT pk_transaccion
- PRIMARY KEY (nro_trans),
+ PRIMARY KEY (nro_trans)
  
 ) ENGINE=InnoDB;
 
@@ -260,7 +261,7 @@ CREATE TABLE debito(
    
  CONSTRAINT FK_debito_caja_ahorro
  FOREIGN KEY (nro_ca) REFERENCES caja_ahorro (nro_ca) 
-   ON DELETE RESTRICT ON UPDATE CASCADE,
+   ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
 
@@ -278,7 +279,7 @@ CREATE TABLE transaccion_por_caja(
    
  CONSTRAINT FK_transaccion_por_caja_caja_ahorro
  FOREIGN KEY (cod_caja) REFERENCES caja (cod_caja) 
-   ON DELETE RESTRICT ON UPDATE CASCADE,
+   ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
 
@@ -295,7 +296,7 @@ CREATE TABLE deposito(
    
  CONSTRAINT FK_deposito_caja_ahorro
  FOREIGN KEY (nro_ca) REFERENCES caja_ahorro (nro_ca) 
-   ON DELETE RESTRICT ON UPDATE CASCADE,
+   ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
 
@@ -342,6 +343,6 @@ CONSTRAINT FK_transferencia_origen
    
 CONSTRAINT FK_transferencia_destino
  FOREIGN KEY (destino) REFERENCES caja_ahorro (nro_ca) 
-   ON DELETE RESTRICT ON UPDATE CASCADE,
+   ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
