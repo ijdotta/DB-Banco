@@ -15,7 +15,7 @@ DROP USER ''@'localhost';
     Por ejemplo, si legajo tiene 4 cifras y TINY INT es suficiente, entonces no usar INT
 
     Type	Storage (Bytes)	Minimum Value Signed	Minimum Value Unsigned	Maximum Value Signed	Maximum Value Unsigned
-    (Type, Bytes, Min_signed, Max_signed, min_unsigned, max_unsigned)
+    (Type, Bytes, Min_signed, min_unsigned, max_signed, max_unsigned)
     TINYINT	1	-128	0	127	255
     SMALLINT	2	-32768	0	32767	65535
     MEDIUMINT	3	-8388608	0	8388607	16777215
@@ -24,7 +24,7 @@ DROP USER ''@'localhost';
 */
 
 CREATE TABLE ciudad (
-  cod_postal INT(4) UNSIGNED NOT NULL,
+  cod_postal SMALLINT(4) UNSIGNED NOT NULL,
   nombre VARCHAR(20),
 
   CONSTRAINT pk_ciudad
@@ -33,12 +33,12 @@ CREATE TABLE ciudad (
 ) ENGINE=InnoDB;
 
 CREATE TABLE sucursal (
-  nro_suc INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+  nro_suc SMALLINT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(20) NOT NULL,
   direccion VARCHAR(20) NOT NULL,
   telefono VARCHAR(20) NOT NULL,
   horario VARCHAR(20) NOT NULL,
-  cod_postal INT(4) UNSIGNED NOT NULL,
+  cod_postal SMALLINT(4) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_sucursal
   PRIMARY KEY (nro_suc),
@@ -50,16 +50,16 @@ CREATE TABLE sucursal (
 ) ENGINE=InnoDB;
 
 CREATE TABLE empleado (
-  legajo INT(4) UNSIGNED NOT NULL AUTO_INCREMENT,
+  legajo SMALLINT(4) UNSIGNED NOT NULL AUTO_INCREMENT,
   apellido VARCHAR(20) NOT NULL,
   nombre VARCHAR(20) NOT NULL,
   tipo_doc VARCHAR(20) NOT NULL,
-  nro_doc INT(8) UNSIGNED NOT NULL,
+  nro_doc INT(8) UNSIGNED NOT NULL, 
   direccion VARCHAR(20) NOT NULL,
   telefono VARCHAR(20) NOT NULL,
   cargo VARCHAR(20) NOT NULL,
   password CHAR(32) NOT NULL,
-  nro_suc INT(3) UNSIGNED NOT NULL,
+  nro_suc SMALLINT(3) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_empleado
   PRIMARY KEY (legajo),
@@ -70,11 +70,11 @@ CREATE TABLE empleado (
 ) ENGINE=InnoDB;
 
 CREATE TABLE cliente(
-  nro_cliente INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+  nro_cliente INT(5) UNSIGNED NOT NULL AUTO_INCREMENT, -- podría usarse MEDIUMINT (pero no creo que convenga por compatibilidad con otras implementaciones de SQL)
   apellido VARCHAR(20) NOT NULL,
   nombre VARCHAR(20) NOT NULL,
   tipo_doc VARCHAR(20) NOT NULL,
-  nro_doc INT(8) UNSIGNED NOT NULL, -- es un natural?
+  nro_doc INT(8) UNSIGNED NOT NULL, 
   direccion VARCHAR(20) NOT NULL,
   telefono VARCHAR(20) NOT NULL,
   fecha_nac DATE NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE plazo_fijo (
   capital FLOAT(15, 2) NOT NULL DEFAULT 0,
   tasa_interes FLOAT(5, 2) NOT NULL DEFAULT 0,
   interes FLOAT(9, 2) NOT NULL DEFAULT 0,
-  nro_suc INT(3) UNSIGNED NOT NULL,
+  nro_suc SMALLINT(3) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_plazo_fijo
   PRIMARY KEY (nro_plazo),
@@ -103,7 +103,7 @@ CREATE TABLE plazo_fijo (
 ) ENGINE=InnoDB;
 
 CREATE TABLE tasa_plazo_fijo (
-  periodo INT(3) UNSIGNED NOT NULL,
+  periodo SMALLINT(3) UNSIGNED NOT NULL,
   monto_inf FLOAT(6, 2) NOT NULL DEFAULT 0,
   monto_sup FLOAT(15, 2) NOT NULL DEFAULT 0,
   tasa FLOAT(3, 2) NOT NULL DEFAULT 0,
@@ -115,7 +115,7 @@ CREATE TABLE tasa_plazo_fijo (
 
 CREATE TABLE plazo_cliente (
   nro_plazo INT(8) UNSIGNED NOT NULL,
-  nro_cliente INT(5) UNSIGNED NOT NULL,
+  nro_cliente INT(5) UNSIGNED NOT NULL, -- posible: MEDIUMINT
 
   CONSTRAINT FK_plazo_cliente_plazo_fijo
   FOREIGN KEY (nro_plazo) REFERENCES plazo_fijo(nro_plazo)
@@ -130,12 +130,12 @@ CREATE TABLE plazo_cliente (
 CREATE TABLE prestamo (
   nro_prestamo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   fecha DATE NOT NULL,
-  cant_meses INT(2) UNSIGNED NOT NULL,
+  cant_meses SMALLINT(2) UNSIGNED NOT NULL, -- pòsible TINYINT
   monto FLOAT(14, 2) NOT NULL DEFAULT 0, 
   tasa_interes FLOAT(3, 2) NOT NULL DEFAULT 0, 
   valor_cuota FLOAT(10, 2) NOT NULL DEFAULT 0, 
-  legajo INT(4) UNSIGNED NOT NULL,
-  nro_cliente INT(5) UNSIGNED NOT NULL,
+  legajo SMALLINT(4) UNSIGNED NOT NULL, 
+  nro_cliente INT(5) UNSIGNED NOT NULL, -- posible MEDIUMINT
 
   CONSTRAINT pk_prestamo
   PRIMARY KEY (nro_prestamo),
@@ -152,7 +152,7 @@ CREATE TABLE prestamo (
 
 CREATE TABLE pago (
   nro_prestamo INT(8) UNSIGNED NOT NULL,
-  nro_pago INT(2) UNSIGNED NOT NULL,
+  nro_pago SMALLINT(2) UNSIGNED NOT NULL, -- posible TINYINT
 
   CONSTRAINT pk_pago
   PRIMARY KEY (nro_pago),
@@ -164,7 +164,7 @@ CREATE TABLE pago (
 ) ENGINE=InnoDB;
 
 CREATE TABLE tasa_prestamo (
-  periodo INT(3) UNSIGNED NOT NULL,
+  periodo SMALLINT(3) UNSIGNED NOT NULL,
   monto_inf FLOAT(10, 2) NOT NULL DEFAULT 0, 
   monto_sup FLOAT(15, 2) NOT NULL DEFAULT 0, 
   tasa FLOAT(5, 2) NOT NULL DEFAULT 0, 
@@ -176,7 +176,7 @@ CREATE TABLE tasa_prestamo (
 
 CREATE TABLE caja_ahorro (
   nro_ca INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-  cbu INT(18) UNSIGNED NOT NULL,
+  cbu INT(18) UNSIGNED NOT NULL, -- ¿BIGINT? Con INT(18) no tira error
   saldo FLOAT(15, 2) UNSIGNED NOT NULL DEFAULT 0,
 
   CONSTRAINT pk_caja_ahorro
@@ -185,7 +185,7 @@ CREATE TABLE caja_ahorro (
 ) ENGINE=InnoDB;
 
 CREATE TABLE caja (
- cod_caja INT UNSIGNED(5) NOT NULL,
+ cod_caja INT(5) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_caja
  PRIMARY KEY (cod_caja)
@@ -193,8 +193,8 @@ CREATE TABLE caja (
 ) ENGINE=InnoDB;
 
 CREATE TABLE ventanilla(
- cod_caja INT UNSIGNED(5) NOT NULL, 
- nro_suc INT UNSIGNED(3) NOT NULL,
+ cod_caja INT(5) UNSIGNED NOT NULL, 
+ nro_suc SMALLINT(3) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_ventanilla
  PRIMARY KEY (cod_caja),
@@ -211,8 +211,8 @@ CREATE TABLE ventanilla(
 
 
 CREATE TABLE atm(
- cod_caja INT UNSIGNED(5) NOT NULL, 
- cod_postal INT UNSIGNED(4) NOT NULL,
+ cod_caja INT(5) UNSIGNED NOT NULL, 
+ cod_postal SMALLINT(4) UNSIGNED NOT NULL,
  direccion VARCHAR(69) NOT NULL,
  
  CONSTRAINT pk_atm
@@ -230,7 +230,7 @@ CREATE TABLE atm(
 
 
 CREATE TABLE transaccion(
- nro_trans INT UNSIGNED(10) NOT NULL, 
+ nro_trans INT(10) UNSIGNED NOT NULL, -- ¿BIGINT?
  fecha DATE NOT NULL,
  hora TIME NOT NULL,
  monto DECIMAL(9,2) NOT NULL,
@@ -242,10 +242,10 @@ CREATE TABLE transaccion(
 
 
 CREATE TABLE debito(
- nro_trans INT UNSIGNED(10) NOT NULL, 
+ nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT? 
  descripcion VARCHAR(69) NOT NULL,
- nro_cliente INT UNSIGNED(5) NOT NULL,
- nro_ca INT UNSIGNED(8) NOT NULL,
+ nro_cliente INT(5) UNSIGNED NOT NULL,
+ nro_ca INT(8) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_debito
  PRIMARY KEY (nro_trans),
@@ -266,8 +266,8 @@ CREATE TABLE debito(
 
 
 CREATE TABLE transaccion_por_caja(
- nro_trans INT UNSIGNED(10) NOT NULL, 
- cod_caja INT UNSIGNED(5) NOT NULL,
+ nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT? 
+ cod_caja INT(5) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_transaccion_por_caja
  PRIMARY KEY (nro_trans),
@@ -283,8 +283,8 @@ CREATE TABLE transaccion_por_caja(
 ) ENGINE=InnoDB;
 
 CREATE TABLE deposito(
- nro_trans INT UNSIGNED(10) NOT NULL, 
- nro_ca INT UNSIGNED(8) NOT NULL,
+ nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT?
+ nro_ca INT(8) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_deposito
  PRIMARY KEY (nro_trans),
@@ -301,9 +301,9 @@ CREATE TABLE deposito(
 
 
 CREATE TABLE extraccion(
- nro_trans INT UNSIGNED(10) NOT NULL, 
- nro_cliente INT UNSIGNED(5) NOT NULL, 
- nro_ca INT UNSIGNED(8) NOT NULL,
+ nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT?
+ nro_cliente INT(5) UNSIGNED NOT NULL, 
+ nro_ca INT(8) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_extraccion
  PRIMARY KEY (nro_trans),
@@ -320,10 +320,10 @@ CONSTRAINT FK_extraccion_cliente_ca
 
 
 CREATE TABLE transferencia(
- nro_trans INT UNSIGNED(10) NOT NULL, 
- nro_cliente INT UNSIGNED(5) NOT NULL, 
- origen INT UNSIGNED(8) NOT NULL,
- destino INT UNSIGNED(8) NOT NULL,
+ nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT?
+ nro_cliente INT(5) UNSIGNED NOT NULL, 
+ origen INT(8) UNSIGNED NOT NULL,
+ destino INT(8) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_transferencia 
  PRIMARY KEY (nro_trans),
