@@ -385,3 +385,49 @@ CONSTRAINT FK_transferencia_destino
    ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
+
+#-------------------------------------------------------------------------
+# Creación de vistas
+CREATE VIEW trans_caja_ahorro AS
+SELECT G.nro_ca,  G.saldo , G.nro_trans, G.fecha, G.hora, G.tipo, G.monto, G.cod_caja, H.nro_cliente, H.tipo_doc, H.nro_doc, H.nombre, H.apellido, destino
+FROM 	(
+			(	SELECT A.nro_ca, A.saldo, F.nro_trans, F.fecha, F.hora, F.monto, F.nro_cliente, F.destino, F.tipo, F.cod_caja
+				FROM	(
+							(	SELECT nro_ca, saldo	FROM caja_ahorro) as A
+							inner JOIN
+							
+								(	SELECT B.nro_trans, B.fecha, B.hora, B.monto, E.cod_caja, E.nro_cliente, E.nro_ca, E.destino, E.tipo
+									FROM 
+								
+										((	SELECT nro_trans, fecha, hora, monto	FROM transaccion) AS B
+									
+											inner JOIN						
+										
+											(
+												SELECT C.nro_trans, C.nro_cliente, C.nro_ca, C.destino, C.tipo, D.cod_caja
+												FROM
+													(	(SELECT nro_trans, nro_cliente, nro_ca, NULL AS destino, "debito" AS tipo FROM debito)
+														union
+														(SELECT nro_trans, nro_cliente, nro_ca, NULL AS destino, "extraccion" AS tipo FROM extraccion)
+														union
+														(SELECT nro_trans, nro_cliente, origen as nro_ca, destino, "transferencia" AS tipo FROM transferencia)
+														union
+														(SELECT nro_trans, NULL AS nro_cliente, nro_ca, NULL AS destino, "deposito" AS tipo FROM deposito)	
+													) AS C
+													
+													LEFT JOIN
+													
+													(SELECT nro_trans, cod_caja FROM transaccion_por_caja) AS D	ON C.nro_trans = D.nro_trans
+												
+											) AS E ON B.nro_trans = E.nro_trans
+										) 
+								) AS F ON A.nro_ca = F.nro_ca
+							)
+				) AS G
+				
+				INNER JOIN 
+				
+				(SELECT nro_cliente, tipo_doc, nro_doc, nombre, apellido FROM cliente) AS H ON G.nro_cliente = H.nro_cliente
+			)
+#-------------------------------------------------------------------------
+# Creación de usuarios y otorgamiento de privilegios 
