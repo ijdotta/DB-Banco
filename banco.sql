@@ -92,9 +92,9 @@ CREATE TABLE cliente(
 
 CREATE TABLE plazo_fijo (
   nro_plazo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-  fecha_inicio DATE NOT NULL,
-  fecha_fin DATE NOT NULL,
   capital FLOAT(15, 2) NOT NULL DEFAULT 0,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,  
   tasa_interes FLOAT(5, 2) NOT NULL DEFAULT 0,
   interes FLOAT(9, 2) NOT NULL DEFAULT 0,
   nro_suc SMALLINT(3) UNSIGNED NOT NULL,
