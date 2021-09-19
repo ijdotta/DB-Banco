@@ -388,6 +388,7 @@ CONSTRAINT FK_transferencia_destino
 
 #-------------------------------------------------------------------------
 # Creación de vistas
+
 CREATE VIEW trans_caja_ahorro AS
 SELECT G.nro_ca,  G.saldo , G.nro_trans, G.fecha, G.hora, G.tipo, G.monto, G.cod_caja, H.nro_cliente, H.tipo_doc, H.nro_doc, H.nombre, H.apellido, destino
 FROM 	(
@@ -429,5 +430,33 @@ FROM 	(
 				
 				(SELECT nro_cliente, tipo_doc, nro_doc, nombre, apellido FROM cliente) AS H ON G.nro_cliente = H.nro_cliente
 			)
+			
 #-------------------------------------------------------------------------
 # Creación de usuarios y otorgamiento de privilegios 
+
+# usuario "admin"
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON banco.* TO 'admin'@'localhost' WITH GRANT OPTION;
+
+# usuario "empleado"
+CREATE USER 'empleado'@'%' IDENTIFIED BY 'empleado';
+GRANT SELECT ON banco.empleado TO 'empleado'@'%';
+GRANT SELECT ON banco.sucursal TO 'empleado'@'%';
+GRANT SELECT ON banco.tasa_plazo_fijo TO 'empleado'@'%';
+GRANT SELECT ON banco.tasa_prestamo TO 'empleado'@'%';
+
+GRANT SELECT, INSERT ON banco.prestamo TO 'empleado'@'%';
+GRANT SELECT, INSERT ON banco.plazo_fijo TO 'empleado'@'%';
+GRANT SELECT, INSERT ON banco.plazo_cliente TO 'empleado'@'%';
+GRANT SELECT, INSERT ON banco.caja_ahorro TO 'empleado'@'%';
+GRANT SELECT, INSERT ON banco.tarjeta TO 'empleado'@'%';
+
+GRANT SELECT, INSERT, UPDATE ON banco.cliente_ca TO 'empleado'@'%';
+GRANT SELECT, INSERT, UPDATE ON banco.cliente TO 'empleado'@'%';
+GRANT SELECT, INSERT, UPDATE ON banco.pago TO 'empleado'@'%';
+
+# usuario "atm"
+CREATE USER 'atm'@'%' IDENTIFIED BY 'atm';
+GRANT SELECT ON banco.trans_caja_ahorro TO 'atm'@'%';
+
+GRANT SELECT, UPDATE ON banco.tarjeta TO 'atm'@'%';
