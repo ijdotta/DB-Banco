@@ -1,6 +1,6 @@
 -- Creación de la base de datos:
 CREATE DATABASE banco;
-USE banco
+USE banco;
 
 -- USUARIOS:
 
@@ -429,16 +429,16 @@ FROM 	(
 				INNER JOIN 
 				
 				(SELECT nro_cliente, tipo_doc, nro_doc, nombre, apellido FROM cliente) AS H ON G.nro_cliente = H.nro_cliente
-			)
+			);
 			
 #-------------------------------------------------------------------------
 # Creación de usuarios y otorgamiento de privilegios 
 
-# usuario "admin"
+/* usuario admin */
 CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES ON banco.* TO 'admin'@'localhost' WITH GRANT OPTION;
 
-# usuario "empleado"
+/* usuario empleado */
 CREATE USER 'empleado'@'%' IDENTIFIED BY 'empleado';
 GRANT SELECT ON banco.empleado TO 'empleado'@'%';
 GRANT SELECT ON banco.sucursal TO 'empleado'@'%';
@@ -455,7 +455,7 @@ GRANT SELECT, INSERT, UPDATE ON banco.cliente_ca TO 'empleado'@'%';
 GRANT SELECT, INSERT, UPDATE ON banco.cliente TO 'empleado'@'%';
 GRANT SELECT, INSERT, UPDATE ON banco.pago TO 'empleado'@'%';
 
-# usuario "atm"
+/* usuario atm */
 CREATE USER 'atm'@'%' IDENTIFIED BY 'atm';
 GRANT SELECT ON banco.trans_caja_ahorro TO 'atm'@'%';
 
