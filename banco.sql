@@ -30,7 +30,7 @@ DROP USER ''@'localhost';
 
 CREATE TABLE ciudad (
   cod_postal SMALLINT(4) UNSIGNED NOT NULL,
-  nombre VARCHAR(20),
+  nombre VARCHAR(20) NOT NULL,
 
   CONSTRAINT pk_ciudad
   PRIMARY KEY (cod_postal)
@@ -92,11 +92,11 @@ CREATE TABLE cliente(
 
 CREATE TABLE plazo_fijo (
   nro_plazo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-  capital FLOAT(15, 2) NOT NULL DEFAULT 0,
+  capital DECIMAL(16, 2) UNSIGNED NOT NULL DEFAULT 0,
   fecha_inicio DATE NOT NULL,
   fecha_fin DATE NOT NULL,  
-  tasa_interes FLOAT(5, 2) NOT NULL DEFAULT 0,
-  interes FLOAT(9, 2) NOT NULL DEFAULT 0,
+  tasa_interes DECIMAL(4, 2) UNSIGNED NOT NULL DEFAULT 0,
+  interes DECIMAL(16, 2) UNSIGNED NOT NULL DEFAULT 0,
   nro_suc SMALLINT(3) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_plazo_fijo
@@ -110,9 +110,9 @@ CREATE TABLE plazo_fijo (
 
 CREATE TABLE tasa_plazo_fijo (
   periodo SMALLINT(3) UNSIGNED NOT NULL,
-  monto_inf FLOAT(6, 2) NOT NULL DEFAULT 0,
-  monto_sup FLOAT(15, 2) NOT NULL DEFAULT 0,
-  tasa FLOAT(3, 2) NOT NULL DEFAULT 0,
+  monto_inf DECIMAL(16, 2) UNSIGNED NOT NULL DEFAULT 0,
+  monto_sup DECIMAL(16, 2) UNSIGNED NOT NULL DEFAULT 0,
+  tasa DECIMAL(4, 2) UNSIGNED NOT NULL DEFAULT 0,
 
   CONSTRAINT pk_tasa_plazo_fijo
   PRIMARY KEY (periodo, monto_inf, monto_sup)
@@ -122,6 +122,9 @@ CREATE TABLE tasa_plazo_fijo (
 CREATE TABLE plazo_cliente (
   nro_plazo INT(8) UNSIGNED NOT NULL,
   nro_cliente INT(5) UNSIGNED NOT NULL, -- posible: MEDIUMINT
+
+  CONSTRAINT pk_plazo_cliente
+  PRIMARY KEY (nro_plazo, nro_cliente),
 
   CONSTRAINT FK_plazo_cliente_plazo_fijo
   FOREIGN KEY (nro_plazo) REFERENCES plazo_fijo(nro_plazo)
@@ -137,9 +140,10 @@ CREATE TABLE prestamo (
   nro_prestamo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   fecha DATE NOT NULL,
   cant_meses SMALLINT(2) UNSIGNED NOT NULL, -- pòsible TINYINT
-  monto FLOAT(14, 2) NOT NULL DEFAULT 0, 
-  tasa_interes FLOAT(3, 2) NOT NULL DEFAULT 0, 
-  valor_cuota FLOAT(10, 2) NOT NULL DEFAULT 0, 
+  monto DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0, 
+  tasa_interes DECIMAL(4, 2) UNSIGNED NOT NULL DEFAULT 0, 
+  interes DECIMAL(9, 2) UNSIGNED NOT NULL DEFAULT 0, 
+  valor_cuota DECIMAL(9, 2) UNSIGNED NOT NULL DEFAULT 0, 
   legajo SMALLINT(4) UNSIGNED NOT NULL, 
   nro_cliente INT(5) UNSIGNED NOT NULL, -- posible MEDIUMINT
 
@@ -159,9 +163,11 @@ CREATE TABLE prestamo (
 CREATE TABLE pago (
   nro_prestamo INT(8) UNSIGNED NOT NULL,
   nro_pago SMALLINT(2) UNSIGNED NOT NULL, -- posible TINYINT
+  fecha_venc DATE NOT NULL,
+  fecha_pago DATE,
 
   CONSTRAINT pk_pago
-  PRIMARY KEY (nro_pago),
+  PRIMARY KEY (nro_prestamo, nro_pago),
 
   CONSTRAINT FK_pago_prestamo
   FOREIGN KEY (nro_prestamo) REFERENCES prestamo(nro_prestamo)
@@ -171,9 +177,9 @@ CREATE TABLE pago (
 
 CREATE TABLE tasa_prestamo (
   periodo SMALLINT(3) UNSIGNED NOT NULL,
-  monto_inf FLOAT(10, 2) NOT NULL DEFAULT 0, 
-  monto_sup FLOAT(15, 2) NOT NULL DEFAULT 0, 
-  tasa FLOAT(5, 2) NOT NULL DEFAULT 0, 
+  monto_inf DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0, 
+  monto_sup DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0, 
+  tasa DECIMAL(4, 2) UNSIGNED NOT NULL DEFAULT 0, 
 
   CONSTRAINT pk_tasa_prestamo
   PRIMARY KEY (periodo, monto_inf, monto_sup)
@@ -182,8 +188,8 @@ CREATE TABLE tasa_prestamo (
 
 CREATE TABLE caja_ahorro (
   nro_ca INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-  cbu INT(18) UNSIGNED NOT NULL, -- ¿BIGINT? Con INT(18) no tira error
-  saldo FLOAT(15, 2) UNSIGNED NOT NULL DEFAULT 0,
+  cbu BIGINT(18) UNSIGNED NOT NULL,
+  saldo DECIMAL(16, 2) UNSIGNED NOT NULL DEFAULT 0,
 
   CONSTRAINT pk_caja_ahorro
   PRIMARY KEY (nro_ca)
@@ -194,7 +200,8 @@ CREATE TABLE cliente_ca (
   nro_cliente INT(5) UNSIGNED NOT NULL,
   nro_ca INT(8) UNSIGNED NOT NULL,
 
-  KEY (nro_cliente, nro_ca),
+  CONSTRAINT pk_cliente_ca
+  PRIMARY KEY (nro_cliente, nro_ca),
 
   CONSTRAINT FK_cliente_ca_cliente
   FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente)
@@ -207,25 +214,24 @@ CREATE TABLE cliente_ca (
 ) ENGINE=InnoDB;
 
 CREATE TABLE tarjeta(
-  nro_tarjeta INT(16) UNSIGNED NOT NULL, -- BIGINT?
+  nro_tarjeta BIGINT(16) UNSIGNED NOT NULL AUTO_INCREMENT,
   pin CHAR(32) NOT NULL,
   cvt CHAR(32) NOT NULL,
-  fecha_venc DATE,
+  fecha_venc DATE NOT NULL,
   nro_cliente INT(5) UNSIGNED NOT NULL,
   nro_ca INT(8) UNSIGNED NOT NULL,
 
-  CONSTRAINT FK_tarjeta_cliente_ca_cliente
-  FOREIGN KEY (nro_cliente) REFERENCES cliente_ca(nro_cliente)
-    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT pk_tarjeta
+  PRIMARY KEY (nro_tarjeta),
 
-  CONSTRAINT FK_tarjeta_cliente_ca_ca
-  FOREIGN KEY (nro_ca) REFERENCES cliente_ca(nro_ca)
+  CONSTRAINT FK_tarjeta_cliente_ca_cliente
+  FOREIGN KEY (nro_cliente, nro_ca) REFERENCES cliente_ca(nro_cliente, nro_ca)
     ON DELETE RESTRICT ON UPDATE CASCADE
 
 ) ENGINE=InnoDB;
 
 CREATE TABLE caja (
- cod_caja INT(5) UNSIGNED NOT NULL,
+ cod_caja INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
  
  CONSTRAINT pk_caja
  PRIMARY KEY (cod_caja)
@@ -270,10 +276,10 @@ CREATE TABLE atm(
 
 
 CREATE TABLE transaccion(
- nro_trans INT(10) UNSIGNED NOT NULL, -- ¿BIGINT?
+ nro_trans INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
  fecha DATE NOT NULL,
  hora TIME NOT NULL,
- monto DECIMAL(9,2) NOT NULL,
+ monto DECIMAL(16,2) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_transaccion
  PRIMARY KEY (nro_trans)
@@ -283,7 +289,7 @@ CREATE TABLE transaccion(
 
 CREATE TABLE debito(
  nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT? 
- descripcion VARCHAR(69) NOT NULL,
+ descripcion TEXT,
  nro_cliente INT(5) UNSIGNED NOT NULL,
  nro_ca INT(8) UNSIGNED NOT NULL,
  
@@ -294,12 +300,8 @@ CREATE TABLE debito(
  FOREIGN KEY (nro_trans) REFERENCES transaccion(nro_trans) 
    ON DELETE RESTRICT ON UPDATE CASCADE,
   
- CONSTRAINT FK_debito_cliente
- FOREIGN KEY (nro_cliente) REFERENCES cliente(nro_cliente) 
-   ON DELETE RESTRICT ON UPDATE CASCADE,
-   
- CONSTRAINT FK_debito_caja_ahorro
- FOREIGN KEY (nro_ca) REFERENCES caja_ahorro (nro_ca) 
+ CONSTRAINT FK_debito_cliente_ca
+ FOREIGN KEY (nro_cliente, nro_ca) REFERENCES cliente_ca(nro_cliente, nro_ca) 
    ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
@@ -373,15 +375,11 @@ CREATE TABLE transferencia(
    ON DELETE RESTRICT ON UPDATE CASCADE,
    
 CONSTRAINT FK_transferencia_cliente
- FOREIGN KEY (nro_cliente) REFERENCES cliente (nro_cliente) 
-   ON DELETE RESTRICT ON UPDATE CASCADE,
-   
-CONSTRAINT FK_transferencia_origen 
- FOREIGN KEY (origen) REFERENCES caja_ahorro (nro_ca) 
+ FOREIGN KEY (nro_cliente, origen) REFERENCES cliente_ca(nro_cliente, nro_ca) 
    ON DELETE RESTRICT ON UPDATE CASCADE,
    
 CONSTRAINT FK_transferencia_destino
- FOREIGN KEY (destino) REFERENCES caja_ahorro (nro_ca) 
+ FOREIGN KEY (destino) REFERENCES caja_ahorro(nro_ca) 
    ON DELETE RESTRICT ON UPDATE CASCADE
  
 ) ENGINE=InnoDB;
