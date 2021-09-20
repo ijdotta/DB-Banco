@@ -387,7 +387,7 @@ CONSTRAINT FK_transferencia_destino
 #-------------------------------------------------------------------------
 # Creación de vistas
 
-CREATE VIEW trans_caja_ahorro AS
+CREATE VIEW trans_cajas_ahorro AS
 SELECT G.nro_ca,  G.saldo , G.nro_trans, G.fecha, G.hora, G.tipo, G.monto, G.cod_caja, H.nro_cliente, H.tipo_doc, H.nro_doc, H.nombre, H.apellido, destino
 FROM 	(
 			(	SELECT A.nro_ca, A.saldo, F.nro_trans, F.fecha, F.hora, F.monto, F.nro_cliente, F.destino, F.tipo, F.cod_caja
