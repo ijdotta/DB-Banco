@@ -455,6 +455,6 @@ GRANT SELECT, INSERT, UPDATE ON banco.pago TO 'empleado'@'%';
 
 /* usuario atm */
 CREATE USER 'atm'@'%' IDENTIFIED BY 'atm';
-GRANT SELECT ON banco.trans_caja_ahorro TO 'atm'@'%';
+GRANT SELECT ON banco.trans_cajas_ahorro TO 'atm'@'%';
 
 GRANT SELECT, UPDATE ON banco.tarjeta TO 'atm'@'%';
