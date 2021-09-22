@@ -63,10 +63,10 @@ INSERT INTO cliente_ca VALUES (2,2);
 INSERT INTO cliente_ca VALUES (3,3);
 INSERT INTO cliente_ca VALUES (4,4);
 
-INSERT INTO tarjeta VALUES (1, "PIN1", "CVT1", '2031-01-01', 1, 1);
-INSERT INTO tarjeta VALUES (2, "PIN2", "CVT2", '2031-01-02', 2, 2);
-INSERT INTO tarjeta VALUES (3, "PIN3", "CVT3", '2031-01-03', 3, 3);
-INSERT INTO tarjeta VALUES (4, "PIN4", "CVT4", '2031-01-04', 4, 4);
+INSERT INTO tarjeta VALUES (1, md5("PIN1"), md5("CVT1"), '2031-01-01', 1, 1);
+INSERT INTO tarjeta VALUES (2, md5("PIN2"), md5("CVT2"), '2031-01-02', 2, 2);
+INSERT INTO tarjeta VALUES (3, md5("PIN3"), md5("CVT3"), '2031-01-03', 3, 3);
+INSERT INTO tarjeta VALUES (4, md5("PIN4"), md5("CVT4"), '2031-01-04', 4, 4);
 
 INSERT INTO caja VALUES (1);
 INSERT INTO caja VALUES (2);

@@ -2,31 +2,11 @@
 CREATE DATABASE banco;
 USE banco;
 
--- USUARIOS:
-
 -- Eliminar usuario vacío
 DROP USER ''@'localhost';
+
 #-------------------------------------------------------------------------
 # Creación Tablas para las entidades
-
-/*
-    REEMPLAZAR LOS INT (y cualquier otro tipo de dato) POR EL DE MENOR REPRESENTACIÓN
-    POSIBLE.
-    Por ejemplo, si legajo tiene 4 cifras y TINY INT es suficiente, entonces no usar INT
-
-    Type	Storage (Bytes)	Minimum Value Signed	Minimum Value Unsigned	Maximum Value Signed	Maximum Value Unsigned
-    (Type, Bytes, Min_signed, min_unsigned, max_signed, max_unsigned)
-    TINYINT	1	-128	0	127	255
-    SMALLINT	2	-32768	0	32767	65535
-    MEDIUMINT	3	-8388608	0	8388607	16777215
-    INT	4	-2147483648	0	2147483647	4294967295
-    BIGINT	8	-263	0	263-1	264-1
-*/
-
-/*
-    * VERIFICAR POSIBLES RELACIONES FALTANTES (Como Tarjeta_CLç)
-    * VERIFICAR EN LAS RELACIONES QUE SOLO PUSIMOS FK SI NO HACE FALTA UNA PK
-*/
 
 CREATE TABLE ciudad (
   cod_postal SMALLINT(4) UNSIGNED NOT NULL,
@@ -121,7 +101,7 @@ CREATE TABLE tasa_plazo_fijo (
 
 CREATE TABLE plazo_cliente (
   nro_plazo INT(8) UNSIGNED NOT NULL,
-  nro_cliente INT(5) UNSIGNED NOT NULL, -- posible: MEDIUMINT
+  nro_cliente INT(5) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_plazo_cliente
   PRIMARY KEY (nro_plazo, nro_cliente),
@@ -139,13 +119,13 @@ CREATE TABLE plazo_cliente (
 CREATE TABLE prestamo (
   nro_prestamo INT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
   fecha DATE NOT NULL,
-  cant_meses SMALLINT(2) UNSIGNED NOT NULL, -- pòsible TINYINT
+  cant_meses SMALLINT(2) UNSIGNED NOT NULL,
   monto DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0, 
   tasa_interes DECIMAL(4, 2) UNSIGNED NOT NULL DEFAULT 0, 
   interes DECIMAL(9, 2) UNSIGNED NOT NULL DEFAULT 0, 
   valor_cuota DECIMAL(9, 2) UNSIGNED NOT NULL DEFAULT 0, 
   legajo SMALLINT(4) UNSIGNED NOT NULL, 
-  nro_cliente INT(5) UNSIGNED NOT NULL, -- posible MEDIUMINT
+  nro_cliente INT(5) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_prestamo
   PRIMARY KEY (nro_prestamo),
