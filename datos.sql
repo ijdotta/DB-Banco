@@ -13,10 +13,10 @@ INSERT INTO sucursal VALUES (2, "nomSucursal2", "dirSucursal2", "telSucursal2", 
 INSERT INTO sucursal VALUES (3, "nomSucursal3", "dirSucursal3", "telSucursal3", "horario3", 3);
 INSERT INTO sucursal VALUES (4, "nomSucursal4", "dirSucursal4", "telSucursal4", "horario4", 4);
 
-INSERT INTO empleado VALUES (1, "apEmpleado1", "nombreEmpleado1", "td1", 1, "dirEmpleado1", "telEmpleado1", "cargo1", "pw1", 1);
-INSERT INTO empleado VALUES (2, "apEmpleado2", "nombreEmpleado2", "td2", 2, "dirEmpleado2", "telEmpleado2", "cargo2", "pw2", 2);
-INSERT INTO empleado VALUES (3, "apEmpleado3", "nombreEmpleado3", "td3", 3, "dirEmpleado3", "telEmpleado3", "cargo3", "pw3", 3);
-INSERT INTO empleado VALUES (4, "apEmpleado4", "nombreEmpleado4", "td4", 4, "dirEmpleado4", "telEmpleado4", "cargo4", "pw4", 4);
+INSERT INTO empleado VALUES (1, "apEmpleado1", "nombreEmpleado1", "td1", 1, "dirEmpleado1", "telEmpleado1", "cargo1", md5("pw1"), 1);
+INSERT INTO empleado VALUES (2, "apEmpleado2", "nombreEmpleado2", "td2", 2, "dirEmpleado2", "telEmpleado2", "cargo2", md5("pw2"), 2);
+INSERT INTO empleado VALUES (3, "apEmpleado3", "nombreEmpleado3", "td3", 3, "dirEmpleado3", "telEmpleado3", "cargo3", md5("pw3"), 3);
+INSERT INTO empleado VALUES (4, "apEmpleado4", "nombreEmpleado4", "td4", 4, "dirEmpleado4", "telEmpleado4", "cargo4", md5("pw4"), 4);
 
 INSERT INTO cliente VALUES (1, "apCliente1", "nomCliente1", "td1", 11, "dirCliente1", "telCliente1", '1950-01-01');
 INSERT INTO cliente VALUES (2, "apCliente2", "nomCliente2", "td2", 22, "dirCliente2", "telCliente2", '1950-01-02');
