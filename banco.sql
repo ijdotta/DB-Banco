@@ -393,14 +393,14 @@ FROM 	(
 			(	SELECT A.nro_ca, A.saldo, F.nro_trans, F.fecha, F.hora, F.monto, F.nro_cliente, F.destino, F.tipo, F.cod_caja
 				FROM	(
 							(	SELECT nro_ca, saldo	FROM caja_ahorro) as A
-							inner JOIN
+							INNER JOIN
 							
 								(	SELECT B.nro_trans, B.fecha, B.hora, B.monto, E.cod_caja, E.nro_cliente, E.nro_ca, E.destino, E.tipo
 									FROM 
 								
 										((	SELECT nro_trans, fecha, hora, monto	FROM transaccion) AS B
 									
-											inner JOIN						
+											INNER JOIN						
 										
 											(
 												SELECT C.nro_trans, C.nro_cliente, C.nro_ca, C.destino, C.tipo, D.cod_caja
@@ -424,7 +424,7 @@ FROM 	(
 							)
 				) AS G
 				
-				INNER JOIN 
+				LEFT JOIN 
 				
 				(SELECT nro_cliente, tipo_doc, nro_doc, nombre, apellido FROM cliente) AS H ON G.nro_cliente = H.nro_cliente
 			);
