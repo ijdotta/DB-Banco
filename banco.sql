@@ -2,9 +2,6 @@
 CREATE DATABASE banco;
 USE banco;
 
--- Eliminar usuario vacío
-DROP USER ''@'localhost';
-
 #-------------------------------------------------------------------------
 # Creación Tablas para las entidades
 
@@ -56,7 +53,7 @@ CREATE TABLE empleado (
 ) ENGINE=InnoDB;
 
 CREATE TABLE cliente(
-  nro_cliente INT(5) UNSIGNED NOT NULL AUTO_INCREMENT, -- podría usarse MEDIUMINT (pero no creo que convenga por compatibilidad con otras implementaciones de SQL)
+  nro_cliente INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   apellido VARCHAR(20) NOT NULL,
   nombre VARCHAR(20) NOT NULL,
   tipo_doc VARCHAR(20) NOT NULL,
@@ -142,7 +139,7 @@ CREATE TABLE prestamo (
 
 CREATE TABLE pago (
   nro_prestamo INT(8) UNSIGNED NOT NULL,
-  nro_pago SMALLINT(2) UNSIGNED NOT NULL, -- posible TINYINT
+  nro_pago SMALLINT(2) UNSIGNED NOT NULL,
   fecha_venc DATE NOT NULL,
   fecha_pago DATE,
 
@@ -268,7 +265,7 @@ CREATE TABLE transaccion(
 
 
 CREATE TABLE debito(
- nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT? 
+ nro_trans INT(10) UNSIGNED NOT NULL,
  descripcion TEXT,
  nro_cliente INT(5) UNSIGNED NOT NULL,
  nro_ca INT(8) UNSIGNED NOT NULL,
@@ -288,7 +285,7 @@ CREATE TABLE debito(
 
 
 CREATE TABLE transaccion_por_caja(
- nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT? 
+ nro_trans INT(10) UNSIGNED NOT NULL,
  cod_caja INT(5) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_transaccion_por_caja
@@ -305,7 +302,7 @@ CREATE TABLE transaccion_por_caja(
 ) ENGINE=InnoDB;
 
 CREATE TABLE deposito(
- nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT?
+ nro_trans INT(10) UNSIGNED NOT NULL,
  nro_ca INT(8) UNSIGNED NOT NULL,
  
  CONSTRAINT pk_deposito
@@ -323,7 +320,7 @@ CREATE TABLE deposito(
 
 
 CREATE TABLE extraccion(
- nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT?
+ nro_trans INT(10) UNSIGNED NOT NULL,
  nro_cliente INT(5) UNSIGNED NOT NULL, 
  nro_ca INT(8) UNSIGNED NOT NULL,
  
@@ -342,7 +339,7 @@ CONSTRAINT FK_extraccion_cliente_ca
 
 
 CREATE TABLE transferencia(
- nro_trans INT(10) UNSIGNED NOT NULL, -- BIGINT?
+ nro_trans INT(10) UNSIGNED NOT NULL,
  nro_cliente INT(5) UNSIGNED NOT NULL, 
  origen INT(8) UNSIGNED NOT NULL,
  destino INT(8) UNSIGNED NOT NULL,
