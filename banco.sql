@@ -19,7 +19,7 @@ CREATE TABLE sucursal (
   nombre VARCHAR(20) NOT NULL,
   direccion VARCHAR(20) NOT NULL,
   telefono VARCHAR(20) NOT NULL,
-  horario VARCHAR(20) NOT NULL,
+  horario VARCHAR(50) NOT NULL,
   cod_postal SMALLINT(4) UNSIGNED NOT NULL,
 
   CONSTRAINT pk_sucursal
